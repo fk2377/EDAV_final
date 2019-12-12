@@ -1,0 +1,39 @@
+---
+title: "EDAV Fall 2019- Final Project- Read Data"
+output: 
+  html_document:
+    code_folding: hide
+author: "Foad Khoshouei- fk2377, Nima Chitsazan nc2806 "
+---
+
+```{r setup, include=FALSE}
+ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+
+```{r}
+
+#Loading data from the website
+url <- "https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page"
+bool <- paths_allowed(url)
+
+df = read_html(url)
+nodes = html_nodes(df, ".faq-answers a")
+links = paste(html_attr(nodes, "href"), sep='') #read all links
+links_2018 <- links[grepl("green_tripdata_2018", links)] #filter green taxi 2018
+n <- sample(1:nrow(X), 5000, replace = F)%>%sort()
+X = read.csv(url(links_2018[1]))
+total = X[n,]
+
+for (i in 2:length(links_2018))
+{
+X <- read.csv(url(links_2018[i]))
+n <- sample(1:nrow(X), 5000, replace = F)%>%sort()
+
+total <- rbind(total,X[n,])
+
+}
+rownames(total)<-1:nrow(total)
+
+```
+
